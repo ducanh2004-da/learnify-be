@@ -1,0 +1,430 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CourseDto {
+  id: String!
+  courseName: String!
+  abstract: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  keyLearnings: [String!]!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type AuthResponse {
+  success: Boolean!
+  message: String
+  token: String
+}
+
+type LessonDto {
+  id: String!
+  lessonName: String!
+  abstract: String
+  courseId: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type AiContentItem {
+  url_pdf: String!
+  content: String!
+}
+
+type AiLessonResponse {
+  lesson_id: String!
+  content: [AiContentItem!]!
+}
+
+type ProgressResponse {
+  id: String!
+  userId: String!
+  courseId: String!
+  completedLessons: Float!
+  totalLessons: Float!
+  percentage: Float!
+  updatedAt: DateTime!
+}
+
+type UserResponse {
+  id: String!
+  username: String!
+  email: String!
+  phoneNumber: String
+  avatar: String
+  role: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type LessonExplanationResponse {
+  id: String!
+  content: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type EnrollmentResponse {
+  userId: String!
+  courseId: String!
+  enrolledAt: DateTime!
+}
+
+type CompleteCourseReturn {
+  id: String!
+  courseName: String!
+  abstract: String
+  keyLearnings: [String!]!
+  isDone: Boolean!
+}
+
+type CompleteCourseResponse {
+  count: Float!
+  data: [CompleteCourseReturn!]
+}
+
+type InProgressCourseReturn {
+  id: String!
+  courseName: String!
+  abstract: String
+  keyLearnings: [String!]!
+  isDone: Boolean!
+}
+
+type InProgressCourseResponse {
+  count: String!
+  data: [InProgressCourseReturn!]
+  progress: Float
+}
+
+type SystemPromptResponse {
+  id: String!
+  title: String!
+  content: String!
+  createdAt: DateTime!
+}
+
+type MessageResponse {
+  id: String
+  content: String
+  senderType: SenderType
+  conversationId: String
+  timestamp: DateTime
+  type: String
+  message: String
+  agent: String
+  response: String
+}
+
+"""Sender type from Prisma enum"""
+enum SenderType {
+  USER
+  AI
+}
+
+type ConversationResponse {
+  id: String!
+  name: String
+  creatorId: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type NodeResponse {
+  id: String!
+  title: String!
+  description: String!
+  order: Float!
+  children: [NodeResponse]
+}
+
+type MindMapResponse {
+  id: String!
+  title: String!
+  courseId: String!
+  createdAt: DateTime!
+  nodes: [NodeResponse]
+}
+
+type MindMapReturn {
+  message: String!
+  data: MindMapResponse!
+}
+
+type NodeReturn {
+  message: String!
+  data: NodeResponse!
+}
+
+type NoteReturn {
+  id: String!
+  title: String!
+  content: String!
+  enrollmentId: String!
+  createdAt: DateTime!
+}
+
+type NoteResponse {
+  message: String!
+  data: NoteReturn
+}
+
+type Document {
+  id: String!
+  fileName: String!
+  fileUrl: String!
+  fileType: String!
+  fileSize: Int!
+  publicId: String!
+  uploadedBy: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type UploadResponse {
+  success: Boolean!
+  document: Document
+}
+
+type SectionResponse {
+  id: String!
+  urlPdf: String!
+  content: String
+  order: Float!
+  lessonId: String!
+  createdAt: DateTime!
+}
+
+type Query {
+  getNotesByEnrollment(enrollmentId: String!): [NoteReturn]
+  getAllCourses: [CourseDto!]!
+  getCourseById(id: String!): CourseDto
+  getCourseByUserId(userId: String!): [CourseDto!]
+  hello: String!
+  INSTRUCTOR: String!
+  getAllLessons: [LessonDto!]!
+  getLessonsByCourseId(id: String!): [LessonDto!]!
+  getLessonById(id: String!): LessonDto
+  getProgress(progressId: String!): ProgressResponse!
+  users: [UserResponse!]!
+  user(id: String!): UserResponse!
+  lessonExplanation(id: String!): LessonExplanationResponse
+  lessonExplanationByLessonAndUser(lessonId: String!, userId: String!): LessonExplanationResponse
+  getUserEnrollments(userId: String!): [EnrollmentResponse!]!
+  countSuccessEnrollments(userId: String!): CompleteCourseResponse
+  countInProgressEnrollments(userId: String!): InProgressCourseResponse
+  systemPrompts: [SystemPromptResponse!]!
+  systemPrompt(id: String!): SystemPromptResponse!
+  myConversations: [ConversationResponse!]!
+  conversation(id: String!): ConversationResponse
+  message(id: String!): MessageResponse
+  messagesByConversation(conversationId: String!): [MessageResponse!]!
+  getMindMapByCourse(courseId: String!): MindMapResponse
+  getNodeById(id: String!): NodeResponse
+  getAllNodeMindMap(mindmapId: String!): [NodeResponse!]
+  getAllDocuments: [Document!]!
+  getDocumentById(id: String!): Document
+  getSectionByLesson(lessonId: String!): [SectionResponse!]
+}
+
+type Mutation {
+  createNote(data: CreateNoteInput!): NoteResponse!
+  updateNote(id: String!, data: UpdateNoteInput!): NoteResponse!
+  deleteNote(id: String!): NoteResponse!
+  createCourse(data: CreateCourseDto!): CourseDto!
+  updateCourse(data: UpdateCourseDto!): CourseDto!
+  deleteCourse(id: String!): CourseDto!
+  register(data: RegisterInput!): AuthResponse!
+  login(data: LoginInput!): AuthResponse!
+  googleLogin(data: GoogleLoginInput!): AuthResponse!
+  logout: Boolean!
+  createLessonFromAi(data: CreateLessonFromAiInput!, pdfFile: Upload!): AiLessonResponse!
+  updateLesson(data: UpdateLessonDto!): LessonDto!
+  deleteLesson(id: String!): LessonDto!
+  markDone(id: String!, isDone: Boolean!): LessonDto!
+  updateProgress(input: UpdateProgressInput!): ProgressResponse!
+  createUser(data: CreateUserInput!): UserResponse!
+  updateUser(data: UpdateUserInput!): UserResponse!
+  deleteUser(id: String!): Boolean!
+  createLessonExplanation(data: CreateLessonExplanationInput!): LessonExplanationResponse!
+  updateLessonExplanation(data: UpdateLessonExplanationInput!): LessonExplanationResponse!
+  deleteLessonExplanation(id: String!): LessonExplanationResponse!
+  enrollCourse(input: CreateEnrollmentInput!): EnrollmentResponse!
+  createSystemPrompt(data: CreateSystemPromptInput!): SystemPromptResponse!
+  updateSystemPrompt(id: String!, data: UpdateSystemPromptInput!): SystemPromptResponse!
+  deleteSystemPrompt(id: String!): Boolean!
+  createConversation(data: CreateConversationInput!): ConversationResponse!
+  updateConversation(data: UpdateConversationInput!): ConversationResponse!
+  deleteConversation(id: String!): ConversationResponse!
+  updateMessage(data: UpdateMessageInput!): MessageResponse!
+  deleteMessage(id: String!): MessageResponse!
+  createMessage(data: CreateMessage2Input!): MessageResponse!
+  createMindMap(data: CreateMindMapInput!): MindMapReturn!
+  updateMindMap(id: String!, data: UpdateMindMapInput!): MindMapReturn!
+  deleteMindMap(id: String!): MindMapReturn!
+  createNode(data: CreateNodeInput!): NodeReturn!
+  updateNode(id: String!, data: UpdateNodeInput!): NodeReturn!
+  deleteNode(id: String!): NodeReturn!
+  uploadDocument(file: Upload!, uploadedBy: String): UploadResponse!
+  deleteDocument(id: String!): UploadResponse!
+}
+
+input CreateNoteInput {
+  title: String!
+  content: String!
+  enrollmentId: String!
+}
+
+input UpdateNoteInput {
+  title: String!
+  content: String!
+  courseId: String
+}
+
+input CreateCourseDto {
+  courseName: String!
+  abstract: String
+  creatorId: String
+}
+
+input UpdateCourseDto {
+  id: String!
+  courseName: String
+  abstract: String
+}
+
+input RegisterInput {
+  username: String!
+  phoneNumber: String!
+  email: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input GoogleLoginInput {
+  googleId: String!
+  email: String!
+}
+
+input CreateLessonFromAiInput {
+  course_id: String!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input UpdateLessonDto {
+  id: String!
+  lessonName: String!
+  abstract: String
+  courseId: String!
+}
+
+input UpdateProgressInput {
+  userId: String!
+  progressId: String!
+  completedLessons: Float!
+}
+
+input CreateUserInput {
+  username: String!
+  email: String!
+  phoneNumber: String
+  password: String!
+}
+
+input UpdateUserInput {
+  id: String!
+  username: String
+  email: String
+  phoneNumber: String
+}
+
+input CreateLessonExplanationInput {
+  emotion: String!
+  lessonId: String!
+  userId: String!
+  courseId: String!
+}
+
+input UpdateLessonExplanationInput {
+  id: String!
+  content: String!
+}
+
+input CreateEnrollmentInput {
+  userId: String!
+  courseId: String!
+  totalLessons: Float!
+}
+
+input CreateSystemPromptInput {
+  title: String!
+  content: String!
+}
+
+input UpdateSystemPromptInput {
+  title: String
+  content: String
+}
+
+input CreateConversationInput {
+  name: String
+  creatorId: String!
+}
+
+input UpdateConversationInput {
+  id: String!
+  name: String
+}
+
+input UpdateMessageInput {
+  id: String!
+  content: String!
+}
+
+input CreateMessage2Input {
+  question: String
+  user_id: String
+  lesson_id: String = "8e10155a-6601-4eda-90ac-e7ab3a2fb54b"
+  messages: String
+  conversationId: String!
+}
+
+input CreateMindMapInput {
+  title: String!
+  courseId: String!
+}
+
+input UpdateMindMapInput {
+  title: String!
+  courseId: String
+}
+
+input CreateNodeInput {
+  title: String!
+  description: String!
+  mindMapId: String
+  order: Float
+  parentId: String
+}
+
+input UpdateNodeInput {
+  title: String!
+  description: String
+  order: Float
+  mindMapId: String
+}
+
+type Subscription {
+  messageAdded(conversationId: String!): MessageResponse!
+}

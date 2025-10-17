@@ -1,0 +1,70 @@
+// enrollment.service.ts
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { EnrollmentDAO } from '@/enrollment/enrollment.dao';
+import { CreateEnrollmentInput } from '@/common/model/DTO/enrollment/enrollment.input';
+import { EnrollmentResponse } from '@/common/model/DTO/enrollment/enrollment.response';
+import { CompleteCourseResponse } from '@/common/model/DTO/profile/completeCourse.response';
+import { InProgressCourseResponse } from '@/common/model/DTO/profile/inProgressCourse.response';  
+
+@Injectable()
+export class EnrollmentService {
+  constructor(private readonly enrollmentDAO: EnrollmentDAO) {}
+
+  async enrollUserToCourse(
+    input: CreateEnrollmentInput,
+  ): Promise<EnrollmentResponse> {
+    const { userId, courseId, totalLessons } = input;
+
+    const [user, course] = await Promise.all([
+      this.enrollmentDAO.findUserById(userId),
+      this.enrollmentDAO.findCourseById(courseId),
+    ]);
+
+    if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
+    if (!course)
+      throw new NotFoundException(`Course with ID ${courseId} not found`);
+
+    const existingEnrollment = await this.enrollmentDAO.findEnrollment(
+      userId,
+      courseId,
+    );
+    if (existingEnrollment)
+      throw new ConflictException('User already enrolled in this course');
+
+    const enrollment = await this.enrollmentDAO.createEnrollment(
+      userId,
+      courseId,
+    );
+    await this.enrollmentDAO.createProgress(userId, courseId, totalLessons);
+
+    return enrollment;
+  }
+
+  async getUserEnrollments(userId: string): Promise<EnrollmentResponse[]> {
+    const enrollments = await this.enrollmentDAO.getUserEnrollments(userId);
+    if (!enrollments.length)
+      throw new NotFoundException(
+        `No enrollments found for user ID: ${userId}`,
+      );
+
+    return enrollments.map((enrollment) => ({
+      userId: enrollment.userId,
+      courseId: enrollment.courseId,
+      enrolledAt: enrollment.enrolledAt,
+    }));
+  }
+  
+  async countSuccessEnrollments(userId: string): Promise<CompleteCourseResponse | null> {
+    const count = await this.enrollmentDAO.countSuccessEnrollments(userId);
+    return count;
+  }
+
+  async countInProgressEnrollments(userId: string): Promise<InProgressCourseResponse | null> {
+    const count = await this.enrollmentDAO.countInProgressEnrollments(userId);
+    return count;
+  }
+}
