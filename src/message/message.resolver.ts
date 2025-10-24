@@ -19,13 +19,14 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { AuthContext } from '../common/interfaces/auth.interface';
 import { ConversationService } from '../conversation/conversation.service';
 import { PubSub } from 'graphql-subscriptions';
+import { IMessageService, MESSAGE_SERVICE_TOKEN } from './message.interface';
 
 @Resolver(() => MessageResponse)
 // @UseGuards(AuthGuard, RolesGuard)
 export class MessageResolver {
   constructor(
     @Inject('PUB_SUB') private pubSub: PubSub,
-    private readonly messageService: MessageService,
+    @Inject(MESSAGE_SERVICE_TOKEN) private readonly messageService: IMessageService,
     private readonly conversationService: ConversationService,
   ) { }
 

@@ -2,15 +2,16 @@ import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { UserResponse } from '@/common/model/DTO/user/user.response';
 import { CreateUserInput, UpdateUserInput } from '@/common/model/DTO/user/user.input';
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { AuthGuard, RolesGuard } from '@/common/guards/auth.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { AuthContext } from '@/common/interfaces/auth.interface';
+import { IUserService, USER_SERVICE_TOKEN } from './user.interface';
 
 @Resolver(() => UserResponse)
 @UseGuards(AuthGuard, RolesGuard)
 export class UserResolver {
-  constructor(private readonly userService: UserService) {}
+  constructor(@Inject(USER_SERVICE_TOKEN) private readonly userService: IUserService) {}
 
   @Query(() => [UserResponse], { name: 'users' })
   @Roles('INSTRUCTOR')

@@ -3,13 +3,14 @@ import { CourseService } from './course.service';
 import { CourseDto } from '@/common/model/DTO/cousre/course.dto';
 import { CreateCourseDto } from '@/common/model/DTO/cousre/create-course.dto';
 import { UpdateCourseDto } from '@/common/model/DTO/cousre/update-course.dto';
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { AuthGuard, RolesGuard } from '../common/guards/auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
+import { ICourseService, COURSE_SERVICE_TOKEN } from './course.interface';
 
 @Resolver(() => CourseDto)
 export class CourseResolver {
-  constructor(private readonly courseService: CourseService) { }
+  constructor(@Inject(COURSE_SERVICE_TOKEN) private readonly courseService: ICourseService) { }
 
   @Query(() => [CourseDto])
   async getAllCourses(): Promise<CourseDto[]> {

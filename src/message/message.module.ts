@@ -8,11 +8,15 @@ import { HttpModule } from '@nestjs/axios';
 import { PubSub } from 'graphql-subscriptions';
 import { ConversationService } from '../conversation/conversation.service';
 import { ConversationDAO } from '../conversation/conversation.dao';
+import { IMessageService, MESSAGE_SERVICE_TOKEN } from './message.interface';
 
 @Module({
   imports: [PrismaModule, AuthModule, HttpModule],
   providers: [
-    MessageService,
+    {
+      provide: MESSAGE_SERVICE_TOKEN,
+      useClass: MessageService
+    },
     MessageDAO,
     MessageResolver,
     ConversationService,
@@ -22,6 +26,6 @@ import { ConversationDAO } from '../conversation/conversation.dao';
       useValue: new PubSub(),
     },
   ],
-  exports: [MessageService],
+  exports: [MESSAGE_SERVICE_TOKEN],
 })
 export class MessageModule { }

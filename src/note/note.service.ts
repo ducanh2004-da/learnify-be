@@ -3,9 +3,10 @@ import { NoteDAO } from './note.dao';
 import { CreateNoteInput, UpdateNoteInput } from '@/common/model/DTO/notes/note.input';
 import { Notes } from '@prisma/client';
 import { NoteReturn } from '@/common/model/DTO/notes/noteReturn.dto';
+import { INoteService, NOTE_SERVICE_TOKEN } from './note.interface';
 
 @Injectable()
-export class NoteService {
+export class NoteService implements INoteService {
     constructor(private readonly noteDAO: NoteDAO) { }
     async getNoteByEnrollment(enrollmentId: string): Promise<Notes[] | null> {
         if(!enrollmentId) {

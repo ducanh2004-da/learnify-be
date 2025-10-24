@@ -14,6 +14,7 @@ import { PrismaService } from '../prisma/prisma.service'; // giả sử bạn c�
 import { createReadStream } from 'fs';
 import { AiLessonResponse } from '@/common/model/DTO/lesson/ai-response.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { ILessonService } from './lesson.interface';
 
 interface LecturerSegment {
   start: number;
@@ -33,7 +34,7 @@ interface AiResponse {
 }
 
 @Injectable()
-export class LessonService {
+export class LessonService implements ILessonService {
   private readonly logger = new Logger("LessonService");
   private readonly aiBase = 'https://ai-elearning-web.onrender.com';
   constructor(

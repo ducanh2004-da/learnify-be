@@ -6,10 +6,18 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { AuthModule } from '@/auth/auth.module';
 import { ProgressModule } from '@/progress/progress.module';
 import { HttpModule } from '@nestjs/axios';
+import { ILessonService, LESSON_SERVICE_TOKEN } from './lesson.interface';
 
 @Module({
   imports: [PrismaModule, AuthModule, ProgressModule, HttpModule], // Import PrismaModule
-  providers: [LessonService, LessonResolver, LessonDAO],
-  exports: [LessonService],
+  providers: [
+    {
+      provide: LESSON_SERVICE_TOKEN,
+      useClass: LessonService
+    }, 
+    LessonResolver, 
+    LessonDAO
+  ],
+  exports: [LESSON_SERVICE_TOKEN],
 })
 export class LessonModule {}

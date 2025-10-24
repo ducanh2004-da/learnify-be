@@ -3,9 +3,10 @@ import { CourseDAO } from '@/course/course.dao';
 import { CreateCourseDto } from '@/common/model/DTO/cousre/create-course.dto';
 import { UpdateCourseDto } from '@/common/model/DTO/cousre/update-course.dto';
 import { Course } from '@prisma/client';
+import { ICourseService } from './course.interface';
 
 @Injectable()
-export class CourseService {
+export class CourseService implements ICourseService {
   constructor(private readonly courseDAO: CourseDAO) { }
 
   async createCourse(data: CreateCourseDto): Promise<Course> {

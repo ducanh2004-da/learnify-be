@@ -2,15 +2,16 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { NoteService } from './note.service';
 import { CreateNoteInput, UpdateNoteInput } from '@/common/model/DTO/notes/note.input';
 import { Notes } from '@prisma/client';
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { AuthGuard, RolesGuard } from '../common/guards/auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { NoteResponse } from '@/common/model/DTO/notes/note.response';
 import { NoteReturn } from '@/common/model/DTO/notes/noteReturn.dto';
+import { INoteService, NOTE_SERVICE_TOKEN } from './note.interface';
 
 @Resolver(() => NoteReturn)
 export class NoteResolver {
-    constructor(private readonly noteService: NoteService) { }
+    constructor(@Inject(NOTE_SERVICE_TOKEN) private readonly noteService: INoteService) { }
 
     @Query(() => [NoteReturn], { nullable: 'itemsAndList' })
     async getNotesByEnrollment(

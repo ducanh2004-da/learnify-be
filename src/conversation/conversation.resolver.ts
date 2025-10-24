@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver, Context } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { ConversationResponse } from '@/common/model/DTO/conversation/conversation.response';
 import {
@@ -9,11 +9,12 @@ import {
 import { AuthGuard, RolesGuard } from '../common/guards/auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AuthContext } from '../common/interfaces/auth.interface';
+import { IConversationService, CONVERSATION_SERVICE_TOKEN } from './conversation.interface';
 
 @Resolver(() => ConversationResponse)
 @UseGuards(AuthGuard, RolesGuard)
 export class ConversationResolver {
-  constructor(private readonly conversationService: ConversationService) {}
+  constructor(@Inject(CONVERSATION_SERVICE_TOKEN) private readonly conversationService: IConversationService) {}
 
   @Query(() => [ConversationResponse])
   @Roles('USER', 'INSTRUCTOR')

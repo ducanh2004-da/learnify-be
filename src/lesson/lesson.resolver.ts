@@ -3,16 +3,17 @@ import { LessonService } from './lesson.service';
 import { LessonDto } from '@/common/model/DTO/lesson/lesson.dto';
 import { CreateLessonFromAiInput } from '@/common/model/DTO/lesson/create-lesson.dto';
 import { UpdateLessonDto } from '@/common/model/DTO/lesson/update-lesson.dto';
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { AuthGuard, RolesGuard } from '../common/guards/auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AiLessonResponse } from '@/common/model/DTO/lesson/ai-response.dto';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { FileUpload } from 'graphql-upload/GraphQLUpload.mjs';
+import { ILessonService, LESSON_SERVICE_TOKEN } from './lesson.interface';
 
 @Resolver(() => LessonDto)
 export class LessonResolver {
-  constructor(private readonly lessonService: LessonService) {}
+  constructor(@Inject(LESSON_SERVICE_TOKEN) private readonly lessonService: ILessonService) {}
 
   @Query(() => [LessonDto])
   async getAllLessons(): Promise<LessonDto[]> {

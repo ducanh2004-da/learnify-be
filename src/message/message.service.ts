@@ -13,13 +13,14 @@ import { SenderType } from '@prisma/client';
 import { PubSub } from 'graphql-subscriptions';
 import { AxiosResponse } from 'axios';
 import { Stream } from 'stream';
+import { IMessageService, MESSAGE_SERVICE_TOKEN } from './message.interface';
 
 interface AIApiResponse {
   result: string;
 }
 
 @Injectable()
-export class MessageService {
+export class MessageService implements IMessageService {
   constructor(
     private readonly messageDAO: MessageDAO,
     private readonly httpService: HttpService,

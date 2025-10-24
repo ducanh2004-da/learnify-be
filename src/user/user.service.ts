@@ -9,9 +9,10 @@ import { UserResponse } from '@/common/model/DTO/user/user.response';
 import * as bcrypt from 'bcrypt';
 import { IUserDAO } from '../common/interfaces/user.dao.interface';
 import { UserDAO } from './user.dao';
+import { IUserService } from './user.interface';
 
 @Injectable()
-export class UserService {
+export class UserService implements IUserService {
   constructor(
     @Inject(UserDAO) private readonly userDAO: IUserDAO,
   ) {}

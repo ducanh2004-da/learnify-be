@@ -6,9 +6,10 @@ import {
 } from '@/common/model/DTO/conversation/conversation.input';
 import { ConversationResponse } from '@/common/model/DTO/conversation/conversation.response';
 import { plainToClass } from 'class-transformer';
+import { IConversationService } from './conversation.interface';
 
 @Injectable()
-export class ConversationService {
+export class ConversationService implements IConversationService {
   constructor(private readonly conversationDAO: ConversationDAO) {}
 
   async createConversation(

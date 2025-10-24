@@ -6,6 +6,7 @@ import { UserDAO } from './user.dao';
 import { AuthModule } from '@/auth/auth.module';
 import { IUserDAO } from '../common/interfaces/user.dao.interface';
 import { PrismaModule } from '@/prisma/prisma.module';
+import { IUserService, USER_SERVICE_TOKEN } from './user.interface';
  
 @Module({
   imports: [PrismaModule, AuthModule],
@@ -13,8 +14,11 @@ import { PrismaModule } from '@/prisma/prisma.module';
     UserResolver,
     PrismaService,
     UserDAO,
-    UserService,
+    {
+      provide: USER_SERVICE_TOKEN,
+      useClass: UserService,
+    }
   ],
-  exports: [UserService],
+  exports: [USER_SERVICE_TOKEN],
 })
 export class UserModule {}

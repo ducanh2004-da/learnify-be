@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { MindmapService } from './mindmap.service';
 import { MindMapResponse } from '@/common/model/DTO/mindmap/mindmapResponse.dto';
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { AuthGuard, RolesGuard } from '@/common/guards/auth.guard';
 import { Roles } from '@/common/decorators/roles.decorator';
 import { CreateMindMapInput, UpdateMindMapInput } from '@/common/model/DTO/mindmap/mindmap.input';
@@ -9,10 +9,11 @@ import { MindMapReturn } from '@/common/model/DTO/mindmap/mindmapReturn';
 import { NodeReturn } from '@/common/model/DTO/mindmap/nodeReturn';
 import { CreateNodeInput, UpdateNodeInput } from '@/common/model/DTO/mindmap/node.input';
 import { NodeResponse } from '@/common/model/DTO/mindmap/nodeResponse.dto';
+import { IMindmapService, MINDMAP_SERVICE_TOKEN } from './mindmap.interface';
 
 @Resolver(() => MindMapResponse)
 export class MindmapResolver {
-    constructor(private readonly mindmapService: MindmapService) { }
+    constructor(@Inject(MINDMAP_SERVICE_TOKEN) private readonly mindmapService: IMindmapService) { }
 
     @Query(() => MindMapResponse, { nullable: true })
     async getMindMapByCourse(

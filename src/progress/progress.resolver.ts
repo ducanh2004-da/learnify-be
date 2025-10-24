@@ -3,15 +3,16 @@ import { ProgressService } from './progress.service';
 import { UpdateProgressInput } from '@/common/model/DTO/progress/progress.input';
 import { ProgressResponse } from '@/common/model/DTO/progress/progress.response';
 import { ForbiddenException } from '@nestjs/common/exceptions';
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { AuthGuard, RolesGuard } from '../common/guards/auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AuthContext } from '../common/interfaces/auth.interface';
+import { IProgressService, PROGRESS_SERVICE_TOKEN } from './progress.interface';
 
 @Resolver('Progress')
 @UseGuards(AuthGuard, RolesGuard)
 export class ProgressResolver {
-  constructor(private readonly progressService: ProgressService) {}
+  constructor(@Inject(PROGRESS_SERVICE_TOKEN) private readonly progressService: IProgressService) {}
 
   @Mutation(() => ProgressResponse)
   @Roles('USER', 'INSTRUCTOR')

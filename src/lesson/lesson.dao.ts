@@ -3,10 +3,12 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Lesson } from '@prisma/client';
 import { ProgressService } from '@/progress/progress.service';
 import { UpdateProgressInput } from '@/common/model/DTO/progress/progress.input';
+import { IProgressService, PROGRESS_SERVICE_TOKEN } from '@/progress/progress.interface';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class LessonDAO {
-  constructor(private readonly prisma: PrismaService, private progress: ProgressService) { }
+  constructor(private readonly prisma: PrismaService, @Inject(PROGRESS_SERVICE_TOKEN) private progress: IProgressService) { }
 
   // async createLesson(data: {
   //   lessonName: string;

@@ -5,9 +5,10 @@ import { UpdateProgressInput } from '@/common/model/DTO/progress/progress.input'
 import { ProgressStatus } from '@prisma/client';
 import { ProgressContext } from '@/common/middleware/progress-context';
 import { ProgressDAO } from './progress.dao';
+import { IProgressService } from './progress.interface';
 
 @Injectable()
-export class ProgressService {
+export class ProgressService implements IProgressService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly progressDAO: ProgressDAO,

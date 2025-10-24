@@ -2,17 +2,18 @@ import { Args, Mutation, Query, Resolver, Context } from '@nestjs/graphql';
 import { EnrollmentService } from './enrollment.service';
 import { CreateEnrollmentInput } from '@/common/model/DTO/enrollment/enrollment.input';
 import { EnrollmentResponse } from '@/common/model/DTO/enrollment/enrollment.response';
-import { UseGuards } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { AuthGuard, RolesGuard } from '../common/guards/auth.guard';
 import { Roles } from '../common/decorators/roles.decorator';
 import { AuthContext } from '../common/interfaces/auth.interface';
 import { CompleteCourseResponse } from '@/common/model/DTO/profile/completeCourse.response';
 import { InProgressCourseResponse } from '@/common/model/DTO/profile/inProgressCourse.response';
+import { IEnrollmentService, ENROLLMENT_SERVICE_TOKEN } from './enrollment.interface';
 
 @Resolver(() => EnrollmentResponse)
 @UseGuards(AuthGuard, RolesGuard)
 export class EnrollmentResolver {
-  constructor(private readonly enrollmentService: EnrollmentService) { }
+  constructor(@Inject(ENROLLMENT_SERVICE_TOKEN) private readonly enrollmentService: IEnrollmentService) { }
 
   @Mutation(() => EnrollmentResponse)
   @Roles('USER', 'INSTRUCTOR')

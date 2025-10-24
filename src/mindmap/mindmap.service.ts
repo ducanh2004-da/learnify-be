@@ -5,9 +5,10 @@ import { MindMapResponse } from '@/common/model/DTO/mindmap/mindmapResponse.dto'
 import { MindMap, MindMapNode } from '@prisma/client';
 import { CreateNodeInput, UpdateNodeInput } from '@/common/model/DTO/mindmap/node.input';
 import { BadRequestException } from '@nestjs/common';
+import { IMindmapService } from './mindmap.interface';
 
 @Injectable()
-export class MindmapService {
+export class MindmapService implements IMindmapService {
     constructor(private readonly mindmapDAO: MindMapDAO) { }
 
     async getMindMapByCourse(courseId: string): Promise<MindMap | null> {
