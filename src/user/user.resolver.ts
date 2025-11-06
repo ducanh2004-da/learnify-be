@@ -22,14 +22,14 @@ export class UserResolver {
   @Query(() => UserResponse, { name: 'user' })
   @Roles('USER', 'INSTRUCTOR')
   async findOne(
-    @Args('id', { type: () => String }) id: string,
-    @Context() ctx: AuthContext,
+    @Context() ctx: any,
   ) {
     // Users can only view their own profile unless they're an INSTRUCTOR
-    if (ctx.user.role !== 'INSTRUCTOR' && id !== ctx.user.id) {
-      throw new Error('You can only view your own profile');
-    }
-    return this.userService.findOne(id);
+    // if (ctx.user.role !== 'INSTRUCTOR') {
+    //   throw new Error('You can only view your own profile');
+    // }
+    const userId = ctx?.user?.sub ?? null;
+    return this.userService.findOne(userId);
   }
 
   @Mutation(() => UserResponse, { name: 'createUser' })
@@ -47,7 +47,7 @@ export class UserResolver {
     @Context() ctx: AuthContext,
   ) {
     // Users can only update their own profile unless they're an INSTRUCTOR
-    if (ctx.user.role !== 'INSTRUCTOR' && data.id !== ctx.user.id) {
+    if (ctx.user.role !== 'INSTRUCTOR' && data.id !== ctx.user?.sub) {
       throw new Error('You can only update your own profile');
     }
     return this.userService.update(data);

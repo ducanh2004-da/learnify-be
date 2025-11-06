@@ -19,7 +19,13 @@ scalar DateTime
 type AuthResponse {
   success: Boolean!
   message: String
-  token: String
+  accessToken: String
+  refreshToken: String
+}
+
+type GenericResponse {
+  success: Boolean!
+  message: String
 }
 
 type LessonDto {
@@ -212,7 +218,7 @@ type Query {
   getLessonById(id: String!): LessonDto
   getProgress(progressId: String!): ProgressResponse!
   users: [UserResponse!]!
-  user(id: String!): UserResponse!
+  user: UserResponse!
   lessonExplanation(id: String!): LessonExplanationResponse
   lessonExplanationByLessonAndUser(lessonId: String!, userId: String!): LessonExplanationResponse
   getUserEnrollments(userId: String!): [EnrollmentResponse!]!
@@ -239,10 +245,11 @@ type Mutation {
   createCourse(data: CreateCourseDto!): CourseDto!
   updateCourse(data: UpdateCourseDto!): CourseDto!
   deleteCourse(id: String!): CourseDto!
-  register(data: RegisterInput!): AuthResponse!
+  register(data: RegisterInput!): GenericResponse!
   login(data: LoginInput!): AuthResponse!
   googleLogin(data: GoogleLoginInput!): AuthResponse!
-  logout: Boolean!
+  refresh: GenericResponse!
+  logout: GenericResponse!
   createLessonFromAi(data: CreateLessonFromAiInput!, pdfFile: Upload!): AiLessonResponse!
   updateLesson(data: UpdateLessonDto!): LessonDto!
   deleteLesson(id: String!): LessonDto!

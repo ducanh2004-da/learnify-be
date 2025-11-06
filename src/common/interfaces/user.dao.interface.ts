@@ -1,5 +1,6 @@
 // src/user/dao/interfaces/user.dao.interface.ts
 import { User } from '@prisma/client';
+import { Role } from '@prisma/client';
 
 export interface IUserDAO {
   findAll(): Promise<User[]>;
@@ -10,7 +11,7 @@ export interface IUserDAO {
     email: string;
     password: string;
     phoneNumber?: string;
-    role: string;
+    role: Role;
   }): Promise<User>;
   update(id: string, data: {
     username?: string;

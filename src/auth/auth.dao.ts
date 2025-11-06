@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { PrismaService } from '@/prisma/prisma.service';
 import { User } from '@prisma/client';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthDAO {
@@ -16,7 +17,7 @@ export class AuthDAO {
     phoneNumber?: string;
     password?: string;
     googleId?: string;
-    role: string;
+    role: Role;
   }): Promise<User> {
     return this.prisma.user.create({ data });
   }

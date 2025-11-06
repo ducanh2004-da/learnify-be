@@ -22,7 +22,7 @@ export class EnrollmentResolver {
     @Context() ctx: AuthContext,
   ): Promise<EnrollmentResponse> {
     // Ensure users can only enroll themselves unless they're an INSTRUCTOR
-    if (ctx.user.role !== 'INSTRUCTOR' && input.userId !== ctx.user.id) {
+    if (ctx.user.role !== 'INSTRUCTOR' && input.userId !== ctx.user?.sub) {
       throw new Error('You can only enroll yourself in courses');
     }
     return this.enrollmentService.enrollUserToCourse(input);
@@ -35,7 +35,7 @@ export class EnrollmentResolver {
     @Context() ctx: AuthContext,
   ): Promise<EnrollmentResponse[]> {
     // Users can only view their own enrollments unless they're an INSTRUCTOR
-    if (ctx.user.role !== 'INSTRUCTOR' && userId !== ctx.user.id) {
+    if (ctx.user.role !== 'INSTRUCTOR' && userId !== ctx.user?.sub) {
       throw new Error('You can only view your own enrollments');
     }
     return this.enrollmentService.getUserEnrollments(userId);

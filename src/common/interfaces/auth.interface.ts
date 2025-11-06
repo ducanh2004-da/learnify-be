@@ -1,6 +1,7 @@
+import { Role } from '@prisma/client';
 export interface AuthContext {
   user: {
-    id: string;
-    role: string;
+    sub: string;
+    role: Role;
   };
 }

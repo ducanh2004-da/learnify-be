@@ -21,7 +21,7 @@ export class ConversationResolver {
   async myConversations(
     @Context() ctx: AuthContext,
   ): Promise<ConversationResponse[]> {
-    return this.conversationService.getConversationsByUserId(ctx.user.id);
+    return this.conversationService.getConversationsByUserId(ctx.user?.sub);
   }
 
   @Query(() => ConversationResponse, { nullable: true })
@@ -31,7 +31,7 @@ export class ConversationResolver {
     @Context() ctx: AuthContext,
   ): Promise<ConversationResponse | null> {
     const conversation = await this.conversationService.getConversationById(id);
-    if (conversation && conversation.creatorId !== ctx.user.id) {
+    if (conversation && conversation.creatorId !== ctx.user?.sub) {
       throw new Error('Unauthorized to access this conversation');
     }
     return conversation;
@@ -45,7 +45,7 @@ export class ConversationResolver {
   ): Promise<ConversationResponse> {
     return this.conversationService.createConversation({
       ...input,
-      creatorId: ctx.user.id,
+      creatorId: ctx.user?.sub,
     });
   }
 
@@ -58,7 +58,7 @@ export class ConversationResolver {
     const conversation = await this.conversationService.getConversationById(
       input.id,
     );
-    if (!conversation || conversation.creatorId !== ctx.user.id) {
+    if (!conversation || conversation.creatorId !== ctx.user?.sub) {
       throw new Error('Unauthorized to update this conversation');
     }
     return this.conversationService.updateConversation(input);
@@ -71,7 +71,7 @@ export class ConversationResolver {
     @Context() ctx: AuthContext,
   ): Promise<ConversationResponse> {
     const conversation = await this.conversationService.getConversationById(id);
-    if (!conversation || conversation.creatorId !== ctx.user.id) {
+    if (!conversation || conversation.creatorId !== ctx.user?.sub) {
       throw new Error('Unauthorized to delete this conversation');
     }
     return this.conversationService.deleteConversation(id);

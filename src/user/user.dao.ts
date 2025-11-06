@@ -3,6 +3,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { User } from '@prisma/client';
 import { IUserDAO } from '@/common/interfaces/user.dao.interface';
 import { UpdateUserInput } from '@/common/model/DTO/user/user.input';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class UserDAO implements IUserDAO {
@@ -25,7 +26,7 @@ export class UserDAO implements IUserDAO {
     username?: string;
     password?: string;
     phoneNumber?: string;
-    role: string;
+    role: Role;
   }) {
     return this.prisma.user.create({ data });
   }

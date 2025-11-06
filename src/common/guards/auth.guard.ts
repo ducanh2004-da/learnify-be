@@ -8,27 +8,43 @@ import { JwtService } from '@nestjs/jwt';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
+import { Request } from 'express';
+import { ConfigService } from '@nestjs/config';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private readonly jwtService: JwtService, private readonly config: ConfigService) {}
+
+  private extractTokenFromRequest(req: Request): string | undefined {
+    // 1. Kiểm tra cookie trước (priority)
+    if (req?.cookies && req.cookies['Authentication']) {
+      return req.cookies['Authentication'];
+    }
+
+    const authHeader = req?.headers?.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      return authHeader.split(' ')[1];
+    }
+    return undefined;
+  }
 
   canActivate(context: ExecutionContext): boolean {
     const ctx = GqlExecutionContext.create(context).getContext();
     const authHeader = ctx.req?.headers?.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Invalid authorization header');
-    }
+    const req: Request = ctx?.req ?? context.switchToHttp().getRequest<Request>();
 
-    const token = authHeader.split(' ')[1];
+    const token = this.extractTokenFromRequest(req);
     if (!token) {
       throw new UnauthorizedException('No token provided');
     }
 
     try {
-      const decoded = this.jwtService.verify(token);
+      const secret = this.config.get<string>('JWT_ACCESS_SECRET');
+      const decoded = this.jwtService.verify(token, { secret });
       ctx.user = decoded;
+      req['user'] = decoded; // gán user vào req để sử dụng trong REST API nếu cần
       return true;
     } catch (error) {
       throw new UnauthorizedException('Invalid token');
@@ -47,7 +63,7 @@ export class RolesGuard implements CanActivate {
     );
     if (!requiredRoles) return true;
 
-    const ctx: { user?: { role: string } } =
+    const ctx: { user?: { role: Role } } =
       GqlExecutionContext.create(context).getContext();
     const user = ctx.user;
 

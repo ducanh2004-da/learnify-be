@@ -7,5 +7,11 @@ export class AuthResponseRegis {
 
   @Field(() => String, { nullable: true })  // Cho phép null
   message?: string;
+
+  @Field(() => String, { nullable: true })
+  accessToken?: string;
+
+  @Field(() => String, { nullable: true })
+  refreshToken?: string;
 }
 

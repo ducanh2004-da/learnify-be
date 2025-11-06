@@ -10,6 +10,7 @@ import * as bcrypt from 'bcrypt';
 import { IUserDAO } from '../common/interfaces/user.dao.interface';
 import { UserDAO } from './user.dao';
 import { IUserService } from './user.interface';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class UserService implements IUserService {
@@ -48,7 +49,7 @@ export class UserService implements IUserService {
       email: data.email,
       password: hashedPassword,
       phoneNumber: data.phoneNumber ?? undefined,
-      role: 'user',
+      role: Role.USER,
     });
 
     return {

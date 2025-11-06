@@ -41,6 +41,8 @@ import { SectionModule } from './section/section.module';
         'graphql-ws': true,
         'subscriptions-transport-ws': true,
       },
+      // expose req và res vào context để resolver có ctx.req / ctx.res
+      context: ({ req, res }) => ({ req, res }),
     }),
     CourseModule,
     LessonModule,

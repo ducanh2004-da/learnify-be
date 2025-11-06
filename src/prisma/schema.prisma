@@ -24,7 +24,8 @@ model User {
   googleId    String? @unique
   phoneNumber String? 
   address     String?
-  role        String    
+  role        Role     @default(USER)  
+  hashedRefreshToken  String?  
   enrollments Enrollment[]
   conversations Conversation[]
   course      Course[]
@@ -35,7 +36,7 @@ model User {
   updatedAt   DateTime @updatedAt
 }
 
-enum role {
+enum Role {
   INSTRUCTOR
   USER
   REVIEWER

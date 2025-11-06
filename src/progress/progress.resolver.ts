@@ -21,7 +21,7 @@ export class ProgressResolver {
     // @Context() ctx: AuthContext,
   ): Promise<ProgressResponse> {
     // Ensure users can only update their own progress unless they're an INSTRUCTOR
-    // if (ctx.user.role !== 'INSTRUCTOR' && input.userId !== ctx.user.id) {
+    // if (ctx.user.role !== 'INSTRUCTOR' && input.userId !== ctx.user?.sub) {
     //   throw new ForbiddenException('You can only update your own progress');
     // }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -37,7 +37,7 @@ export class ProgressResolver {
     const progress = await this.progressService.getProgress(progressId);
 
     // Ensure users can only view their own progress unless they're an INSTRUCTOR
-    if (ctx.user.role !== 'INSTRUCTOR' && progress.userId !== ctx.user.id) {
+    if (ctx.user.role !== 'INSTRUCTOR' && progress.userId !== ctx.user?.sub) {
       throw new ForbiddenException('You can only view your own progress');
     }
 

@@ -43,7 +43,7 @@ export class MessageResolver {
     const conversation = await this.conversationService.getConversationById(
       message.conversationId ?? '1',
     );
-    // if (!conversation || conversation.creatorId !== ctx.user.id) {
+    // if (!conversation || conversation.creatorId !== ctx.user?.sub) {
     if (!conversation) {
       throw new Error('Unauthorized to access this message');
     }
@@ -59,7 +59,7 @@ export class MessageResolver {
     // Check if user has access to the conversation
     const conversation =
       await this.conversationService.getConversationById(conversationId);
-    // if (!conversation || conversation.creatorId !== ctx.user.id) {
+    // if (!conversation || conversation.creatorId !== ctx.user?.sub) {
     if (!conversation) {
       throw new Error("Unauthorized to access this conversation's messages");
     }
@@ -81,7 +81,7 @@ export class MessageResolver {
     const conversation = await this.conversationService.getConversationById(
       message.conversationId ?? '1',
     );
-    if (!conversation || conversation.creatorId !== ctx.user.id) {
+    if (!conversation || conversation.creatorId !== ctx.user?.sub) {
       throw new Error('Unauthorized to update this message');
     }
     return this.messageService.updateMessage(input);
@@ -102,7 +102,7 @@ export class MessageResolver {
     const conversation = await this.conversationService.getConversationById(
       message.conversationId ?? '1',
     );
-    if (!conversation || conversation.creatorId !== ctx.user.id) {
+    if (!conversation || conversation.creatorId !== ctx.user?.sub) {
       throw new Error('Unauthorized to delete this message');
     }
     return this.messageService.deleteMessage(id);
@@ -129,7 +129,7 @@ export class MessageResolver {
     const conversation = await this.conversationService.getConversationById(
       data.conversationId,
     );
-    // if (!conversation || conversation.creatorId !== ctx.user.id) {
+    // if (!conversation || conversation.creatorId !== ctx.user?.sub) {
     if (!conversation) {
       throw new Error('Unauthorized to create message in this conversation');
     }

@@ -39,6 +39,8 @@ export class LessonResolver {
   }
 
   @Mutation(() => AiLessonResponse)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('INSTRUCTOR')
   async createLessonFromAi(
     @Args('data') data: CreateLessonFromAiInput,
     @Args({ name: 'pdfFile', type: () => GraphQLUpload }) pdfFile: Promise<FileUpload>,

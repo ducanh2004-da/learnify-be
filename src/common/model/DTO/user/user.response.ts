@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Role } from '@prisma/client';
 
 @ObjectType()
 export class UserResponse {
@@ -18,7 +19,7 @@ export class UserResponse {
   avatar?: string | null;
 
   @Field()
-  role: string; 
+  role: Role; 
 
   @Field()
   createdAt: Date;

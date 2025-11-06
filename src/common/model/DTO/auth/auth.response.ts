@@ -8,7 +8,19 @@ export class AuthResponse {
   @Field(() => String, { nullable: true })  // Cho phép null
   message?: string;
 
-  @Field(() => String, { nullable: true }) // ✅ Fix lỗi: Chỉ rõ kiểu dữ liệu của token
-  token?: string;
+  @Field(() => String, { nullable: true })
+  accessToken?: string;
+
+  @Field(() => String, { nullable: true })
+  refreshToken?: string;
+}
+
+@ObjectType()
+export class GenericResponse {
+  @Field()
+  success: boolean;
+
+  @Field({ nullable: true })
+  message?: string;
 }
 

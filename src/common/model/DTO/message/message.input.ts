@@ -1,10 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsString, IsUUID } from 'class-validator';
+import { IsString, IsUUID, Min, MinLength } from 'class-validator';
 
 @InputType()
 export class CreateMessageInput {
   @Field(() => String)
-  @IsString()
+  @IsString({ message: 'content must be string' })
+  @MinLength(1, { message: 'content must at least 1 character' })
   content: string;
 
   @Field(() => String)
@@ -12,9 +13,11 @@ export class CreateMessageInput {
   conversationId: string;
 
   @Field(() => String)
+  @IsString({ message: 'courseId must be string' })
   courseId: string;
 
   @Field(() => String)
+  @IsString({ message: 'lessonId must be string' })
   lessonId: string;
 }
 
@@ -25,14 +28,15 @@ export class UpdateMessageInput {
   id: string;
 
   @Field(() => String)
-  @IsString()
+  @IsString({ message: 'content must be string' })
+  @MinLength(1, { message: 'content must at least 1 character' })
   content: string;
 }
 
 @InputType()
 export class CreateMessage2Input {
   @Field(() => String, { nullable: true })
-  @IsString()
+  @IsString({ message: 'question must be string' })
   question: string;
 
   @Field(() => String, { nullable: true })
