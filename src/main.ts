@@ -18,7 +18,7 @@ async function bootstrap() {
       'http://localhost:5173',
       'https://learnify.io.vn',
       'https://learnify-fe.vercel.app',
-      'https://learnify-be.onrender.com/graphql'
+      'https://learnify-be.onrender.com'
     ], // <- client origin (vite)
     credentials: true,                  // RẤT QUAN TRỌNG: cho phép cookie
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
