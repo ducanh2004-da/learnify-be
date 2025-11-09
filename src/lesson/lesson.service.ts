@@ -106,8 +106,10 @@ async sendFileToAiAndSave(args: {
     axiosResp = await axios.post(url, form, {
       headers,
       responseType: 'stream',
+      // kích thước body không giới hạn
       maxBodyLength: Infinity,
-      timeout: 5 * 60 * 1000,
+      // nếu server AI không trả về thì ném lỗi 
+      timeout: 10 * 60 * 1000,
     });
     this.logger.log('AI response headers: ' + JSON.stringify(axiosResp.headers ?? {}));
   } catch (err: any) {
