@@ -81,9 +81,11 @@ export class LessonService implements ILessonService {
 
 async sendFileToAiAndSave(args: {
   course_id: string;
+  lessonName: string;
+  abstract: string;
   file: FileUpload;
 }) {
-  const { course_id, file } = args;
+  const { course_id, lessonName: lessonTitle, abstract, file } = args;
   const { filename, mimetype, createReadStream } = file;
   const url = `${this.aiBase}/lecturer`;
 
@@ -215,7 +217,7 @@ async sendFileToAiAndSave(args: {
   const contentText = mappedContentForResponse.map(m => m.content).join('\n\n');
 
   const lessonId = finalPayload?.lesson_id ?? this.generateUuidFallback();
-  const lessonName = finalPayload?.title ?? `Lesson from AI ${new Date().toISOString()}`;
+  const lessonName = lessonTitle ?? `Lesson from AI ${new Date().toISOString()}`;
 
   // Prepare section rows for createMany
   const sectionsData = mappedContentForResponse.map((c, idx) => ({
@@ -234,14 +236,14 @@ async sendFileToAiAndSave(args: {
         where: { id: lessonId },
         update: {
           courseId: course_id,
-          abstract: contentText ?? undefined,
+          abstract: abstract ?? undefined,
           lessonName,
         },
         create: {
           id: lessonId,
           courseId: course_id,
           lessonName,
-          abstract: contentText ?? null,
+          abstract: abstract ?? null,
         },
       }),
       // remove old sections for this lesson (so we replace them)
