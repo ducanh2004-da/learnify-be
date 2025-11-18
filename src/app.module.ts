@@ -20,6 +20,7 @@ import { DocumentModule } from './document/document.module';
 import { CloudinaryProvider } from './common/cloudinary/cloudinary.config';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { SectionModule } from './section/section.module';
+import { ChatModule } from './chat/chat.module';
 
 
 @Module({
@@ -59,6 +60,7 @@ import { SectionModule } from './section/section.module';
     DocumentModule,
     CloudinaryModule,
     SectionModule,
+    ChatModule,
   ],
   providers: [NoteResolver, CloudinaryProvider],
 })

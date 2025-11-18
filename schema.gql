@@ -206,6 +206,35 @@ type SectionResponse {
   createdAt: DateTime!
 }
 
+type ConversationParticipant {
+  id: String!
+  conversationId: String!
+  userId: String!
+  user: UserResponse
+  joinedAt: DateTime!
+}
+
+type Message {
+  id: String!
+  conversationId: String!
+  senderId: String!
+  content: String!
+  read: Boolean!
+  sender: UserResponse
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Conversation {
+  id: String!
+  title: String
+  isGroup: Boolean!
+  participants: [ConversationParticipant!]!
+  messages: [Message!]
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type Query {
   getNotesByEnrollment(enrollmentId: String!): [NoteReturn]
   getAllCourses: [CourseDto!]!
@@ -236,6 +265,8 @@ type Query {
   getAllDocuments: [Document!]!
   getDocumentById(id: String!): Document
   getSectionByLesson(lessonId: String!): [SectionResponse!]
+  getMessages(conversationId: String!, take: Float): [Message!]!
+  getMyConversations: [Conversation!]!
 }
 
 type Mutation {
@@ -265,7 +296,7 @@ type Mutation {
   createSystemPrompt(data: CreateSystemPromptInput!): SystemPromptResponse!
   updateSystemPrompt(id: String!, data: UpdateSystemPromptInput!): SystemPromptResponse!
   deleteSystemPrompt(id: String!): Boolean!
-  createConversation(data: CreateConversationInput!): ConversationResponse!
+  createConversation(userIds: [String!]!, title: String): Conversation!
   updateConversation(data: UpdateConversationInput!): ConversationResponse!
   deleteConversation(id: String!): ConversationResponse!
   updateMessage(data: UpdateMessageInput!): MessageResponse!
@@ -279,6 +310,7 @@ type Mutation {
   deleteNode(id: String!): NodeReturn!
   uploadDocument(file: Upload!, uploadedBy: String): UploadResponse!
   deleteDocument(id: String!): UploadResponse!
+  createSocketToken: String!
 }
 
 input CreateNoteInput {
@@ -384,11 +416,6 @@ input CreateSystemPromptInput {
 input UpdateSystemPromptInput {
   title: String
   content: String
-}
-
-input CreateConversationInput {
-  name: String
-  creatorId: String!
 }
 
 input UpdateConversationInput {

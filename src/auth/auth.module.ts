@@ -15,11 +15,21 @@ import { AuthDAO } from './auth.dao';
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '12h' },
-      }),
       inject: [ConfigService],
+      // đăng ký async để lấy secret từ ConfigService; global:true để không cần import JwtModule ở nhiều module
+      useFactory: async (configService: ConfigService) => {
+        // ưu tiên tên biến JWT_ACCESS_SECRET để nhất quán với AuthGuard đã dùng trước đó
+        const secret = configService.get<string>('JWT_ACCESS_SECRET') || configService.get<string>('JWT_SECRET');
+        if (!secret) {
+          // fail-fast: nếu thiếu biến môi trường thì rõ ràng báo lỗi khi app khởi động
+          throw new Error('JWT_ACCESS_SECRET (or JWT_SECRET) is not set in environment variables');
+        }
+        return {
+          secret,
+          signOptions: { expiresIn: '12h' }, // bạn có thể thay đổi theo nhu cầu
+        };
+      },
+      global: true,
     }),
   ],
   providers: [

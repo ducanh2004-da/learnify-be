@@ -9,18 +9,16 @@ import { AuthContext } from '@/common/interfaces/auth.interface';
 import { IUserService, USER_SERVICE_TOKEN } from './user.interface';
 
 @Resolver(() => UserResponse)
-@UseGuards(AuthGuard, RolesGuard)
 export class UserResolver {
   constructor(@Inject(USER_SERVICE_TOKEN) private readonly userService: IUserService) {}
 
   @Query(() => [UserResponse], { name: 'users' })
-  @Roles('INSTRUCTOR')
   async findAll() {
     return this.userService.findAll();
   }
 
   @Query(() => UserResponse, { name: 'user' })
-  @Roles('USER', 'INSTRUCTOR')
+  @UseGuards(AuthGuard, RolesGuard)
   async findOne(
     @Context() ctx: any,
   ) {
@@ -33,6 +31,7 @@ export class UserResolver {
   }
 
   @Mutation(() => UserResponse, { name: 'createUser' })
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('INSTRUCTOR')
   async create(
     @Args('data', { type: () => CreateUserInput }) data: CreateUserInput,
@@ -41,6 +40,7 @@ export class UserResolver {
   }
 
   @Mutation(() => UserResponse, { name: 'updateUser' })
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('USER', 'INSTRUCTOR')
   async update(
     @Args('data', { type: () => UpdateUserInput }) data: UpdateUserInput,

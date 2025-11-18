@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>WebSocket Test</h1>
+  <div id="status">Đang kết nối...</div>
+  <div id="logs"></div>
+  
+  <script>
+    const logs = document.getElementById('logs');
+    const status = document.getElementById('status');
+    
+    function log(msg) {
+      logs.innerHTML += '<div>' + msg + '</div>';
+      console.log(msg);
+    }
+
+    log('🔌 Connecting to http://localhost:10000/chat...');
+    
+    const socket = io('http://localhost:10000/chat', {
+      transports: ['websocket', 'polling'],
+      auth: { token: 'dummy-token' } // Sẽ fail nhưng test connection
+    });
+
+    socket.on('connect', () => {
+      status.innerHTML = '✅ Connected! Socket ID: ' + socket.id;
+      status.style.color = 'green';
+      log('✅ Socket connected: ' + socket.id);
+    });
+
+    socket.on('connect_error', (err) => {
+      status.innerHTML = '❌ Connection Error: ' + err.message;
+      status.style.color = 'red';
+      log('❌ Connect error: ' + err.message);
+    });
+
+    socket.on('error', (err) => {
+      log('❌ Socket error: ' + err);
+    });
+
+    socket.on('disconnect', (reason) => {
+      log('❌ Disconnected: ' + reason);
+    });
+  </script>
+</body>
+</html>

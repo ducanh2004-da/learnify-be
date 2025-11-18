@@ -5,9 +5,9 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
-  output = "../../node_modules/.prisma/client"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"] 
+  provider      = "prisma-client-js"
+  output        = "../../node_modules/.prisma/client"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -17,23 +17,25 @@ datasource db {
 }
 
 model User {
-  id          String  @id @default(uuid())
-  username    String  @default("Anonymous")
-  email       String  @unique
-  password    String?
-  googleId    String? @unique
-  phoneNumber String? 
-  address     String?
-  role        Role     @default(USER)  
-  hashedRefreshToken  String?  
-  enrollments Enrollment[]
-  conversations Conversation[]
-  course      Course[]
-  progress Progress[] 
-  avatar      String?
-  explanations LessonExplanation[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                       String                    @id @default(uuid())
+  username                 String                    @default("Anonymous")
+  email                    String                    @unique
+  password                 String?
+  googleId                 String?                   @unique
+  phoneNumber              String?
+  address                  String?
+  role                     Role                      @default(USER)
+  hashedRefreshToken       String?
+  enrollments              Enrollment[]
+  conversations            Conversation[]
+  course                   Course[]
+  progress                 Progress[]
+  avatar                   String?
+  explanations             LessonExplanation[]
+  conversationParticipants ConversationParticipant[]
+  messageChats             MessageChat[]
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
 }
 
 enum Role {
@@ -42,59 +44,57 @@ enum Role {
   REVIEWER
 }
 
-
-
 model Course {
-  id         String    @id @default(uuid())
-  courseName String
-  abstract   String?
-  lessons    Lesson[]
-  enrollments Enrollment[]
-  progress Progress[] 
-  keyLearnings  String[]     @default([])
-  mindMap    MindMap?
-  creator       User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  creatorId     String
-  documents  Document?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  isDone     Boolean  @default(false)
+  id           String       @id @default(uuid())
+  courseName   String
+  abstract     String?
+  lessons      Lesson[]
+  enrollments  Enrollment[]
+  progress     Progress[]
+  keyLearnings String[]     @default([])
+  mindMap      MindMap?
+  creator      User         @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId    String
+  documents    Document?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  isDone       Boolean      @default(false)
 
   @@index([creatorId])
 }
 
 model Lesson {
-  id         String  @id @default(uuid())
-  lessonName String
-  abstract   String?
-  course     Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId   String
-  explanations LessonExplanation[] 
-  sections   Section[]
-  quiz       Quiz?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  isDone     Boolean  @default(false)
+  id           String              @id @default(uuid())
+  lessonName   String
+  abstract     String?
+  course       Course              @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId     String
+  explanations LessonExplanation[]
+  sections     Section[]
+  quiz         Quiz?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  isDone       Boolean             @default(false)
 
   @@index([courseId])
 }
 
 model Section {
-  id         String   @id @default(uuid())
-  urlPdf     String?
-  content    String?
-  order      Int      @default(0)
-  lessonId   String
-  lesson     Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(uuid())
+  urlPdf    String?
+  content   String?
+  order     Int      @default(0)
+  lessonId  String
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([lessonId])
 }
 
 model LessonExplanation {
   id        String   @id @default(uuid())
-  emotion   String 
+  emotion   String
   content   String
   lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   lessonId  String
@@ -103,22 +103,23 @@ model LessonExplanation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@unique([lessonId, userId]) // Ensures one explanation per lesson per user
   @@index([lessonId, userId])
-  @@unique([lessonId, userId])  // Ensures one explanation per lesson per user
 }
 
 model Enrollment {
-  id        String  @id @default(uuid())
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  course    Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId  String
-  notes     Notes[]
-  typeCourse  ProgressStatus  @default(IN_PROGRESS)  
-  enrolledAt DateTime @default(now())
+  id         String         @id @default(uuid())
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  course     Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId   String
+  notes      Notes[]
+  typeCourse ProgressStatus @default(IN_PROGRESS)
+  enrolledAt DateTime       @default(now())
 
   @@index([userId, courseId])
 }
+
 model AI {
   id            String         @id @default(uuid())
   emotion       String
@@ -129,11 +130,11 @@ model AI {
 }
 
 model SystemPrompt {
-  id       String @id @default(uuid())
-  title    String
-  content  String
-  ai       AI?    @relation(fields: [aiId], references: [id])
-  aiId     String?
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  ai        AI?      @relation(fields: [aiId], references: [id])
+  aiId      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -143,12 +144,11 @@ enum SenderType {
   AI
 }
 
-
 model Message {
-  id             String     @id @default(uuid())
-  senderType     SenderType 
+  id             String       @id @default(uuid())
+  senderType     SenderType
   content        String
-  timestamp      DateTime   @default(now())
+  timestamp      DateTime     @default(now())
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   conversationId String
 
@@ -156,28 +156,28 @@ model Message {
 }
 
 model Conversation {
-  id            String    @id @default(uuid())
-  name          String?
-  creator       User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-  creatorId     String
-  messages      Message[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id        String    @id @default(uuid())
+  name      String?
+  creator   User      @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creatorId String
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([creatorId])
 }
 
 model Progress {
-  id         String   @id @default(uuid())
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String
-  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId   String
+  id               String         @id @default(uuid())
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String
+  course           Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId         String
   completedLessons Int            @default(0)
   totalLessons     Int            @default(0)
-  percentage Float    @default(0.0) 
-  status     ProgressStatus @default(IN_PROGRESS)
-  updatedAt  DateTime @updatedAt
+  percentage       Float          @default(0.0)
+  status           ProgressStatus @default(IN_PROGRESS)
+  updatedAt        DateTime       @updatedAt
 
   @@unique([userId, courseId])
   @@index([percentage])
@@ -187,35 +187,37 @@ enum ProgressStatus {
   IN_PROGRESS
   COMPLETED
 }
+
 model MindMap {
-  id         String   @id @default(uuid())
-  title      String
-  nodes      MindMapNode[]
-  courseId   String   @unique           
-  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String        @id @default(uuid())
+  title     String
+  nodes     MindMapNode[]
+  courseId  String        @unique
+  course    Course        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 
   @@index([courseId])
 }
 
 model MindMapNode {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   title       String
   description String?
   mindMapId   String?
-  mindMap     MindMap?  @relation(fields: [mindMapId], references: [id], onDelete: Cascade)
+  mindMap     MindMap?      @relation(fields: [mindMapId], references: [id], onDelete: Cascade)
   parentId    String?
-  parent      MindMapNode?    @relation("NodeChildren", fields: [parentId], references: [id], onDelete: Cascade)
-  children    MindMapNode[]   @relation("NodeChildren")
-  order       Int?     
+  parent      MindMapNode?  @relation("NodeChildren", fields: [parentId], references: [id], onDelete: Cascade)
+  children    MindMapNode[] @relation("NodeChildren")
+  order       Int?
+
   @@index([mindMapId, parentId])
 }
 
 model Quiz {
   id        String     @id @default(uuid())
   name      String?
-  lessonId  String     @unique   
+  lessonId  String     @unique
   lesson    Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   questions Question[]
   createdAt DateTime   @default(now())
@@ -225,12 +227,12 @@ model Quiz {
 }
 
 model Question {
-  id        String    @id @default(uuid())
-  text      String
-  quizId    String
-  quiz      Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  options   Option[]
-  order     Int?
+  id      String   @id @default(uuid())
+  text    String
+  quizId  String
+  quiz    Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options Option[]
+  order   Int?
 
   @@index([quizId])
 }
@@ -241,6 +243,7 @@ model Option {
   isCorrect  Boolean  @default(false)
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
   @@index([questionId])
 }
 
@@ -252,30 +255,66 @@ enum QuestionType {
 }
 
 model Notes {
-  id          String    @id @default(uuid())
-  title       String
-  content     String
-  enrollmentId  String
-  enrollment    Enrollment  @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String     @id @default(uuid())
+  title        String
+  content      String
+  enrollmentId String
+  enrollment   Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
   @@index([enrollmentId])
 }
 
 model Document {
-  id          String   @id @default(uuid())
-  fileName    String
-  fileUrl     String
-  fileType    String   
-  fileSize    Int      
-  publicId    String   @unique 
-  courseId    String   @unique
-  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  uploadedBy  String?  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(uuid())
+  fileName   String
+  fileUrl    String
+  fileType   String
+  fileSize   Int
+  publicId   String   @unique
+  courseId   String   @unique
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  uploadedBy String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@map("documents")
   @@index([courseId])
+  @@map("documents")
+}
+
+model ConversationChat {
+  id           String                    @id @default(uuid())
+  title        String?
+  isGroup      Boolean                   @default(false)
+  participants ConversationParticipant[]
+  messages     MessageChat[]
+  createdAt    DateTime                  @default(now())
+  updatedAt    DateTime                  @updatedAt
+}
+
+model ConversationParticipant {
+  id             String           @id @default(uuid())
+  conversationId String
+  userId         String
+  conversation   ConversationChat @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt       DateTime         @default(now())
+
+  @@unique([conversationId, userId])
+  @@index([conversationId, userId])
+}
+
+model MessageChat {
+  id             String           @id @default(uuid())
+  conversationId String
+  senderId       String
+  content        String
+  read           Boolean          @default(false)
+  conversation   ConversationChat @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User             @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@index([conversationId, createdAt])
 }

@@ -41,7 +41,14 @@ async function bootstrap() {
   }
 
   await app.listen(port, address);
-  console.log(`Server listening at ${address} on port ${port}`);
+  console.log('');
+  console.log('='.repeat(50));
+  console.log(`🚀 Server is running`);
+  console.log(`📍 HTTP: http://localhost:${port}`);
+  console.log(`📍 GraphQL: http://localhost:${port}/graphql`);
+  console.log(`🔌 WebSocket: http://localhost:${port}/chat`);
+  console.log('='.repeat(50));
+  console.log('');
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
